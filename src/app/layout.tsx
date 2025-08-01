@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
-import '@/styles/globals.css';
+import './globals.css';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Toaster } from 'react-hot-toast';
+import { SessionProvider } from '@/components/providers/SessionProvider';
 
-const inter = Inter({
+const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 });
 
-const poppins = Poppins({
+const poppins = Poppins({ 
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-poppins',
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
     default: 'Vizodex - Dijital Menü Sistemi',
     template: '%s | Vizodex',
   },
-  description: 'Modern restoran ve kafeler için QR kod tabanlı dijital menü sistemi. Kolay yönetim, mobil uyumlu tasarım.',
-  keywords: ['dijital menü', 'QR menü', 'restoran', 'kafe', 'menü sistemi', 'vizodex'],
+  description: 'Modern restoran ve kafeler için QR kod tabanlı dijital menü çözümleri. Kolay yönetim, mobil uyumlu tasarım.',
+  keywords: ['dijital menü', 'QR kod', 'restoran', 'kafe', 'menü sistemi', 'mobil menü'],
   authors: [{ name: 'Vizodex' }],
   creator: 'Vizodex',
   publisher: 'Vizodex',
@@ -32,24 +33,20 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://vizodex.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   alternates: {
     canonical: '/',
-    languages: {
-      'tr-TR': '/tr',
-      'en-US': '/en',
-    },
   },
   openGraph: {
     type: 'website',
     locale: 'tr_TR',
-    url: 'https://vizodex.com',
+    url: '/',
     title: 'Vizodex - Dijital Menü Sistemi',
-    description: 'Modern restoran ve kafeler için QR kod tabanlı dijital menü sistemi',
+    description: 'Modern restoran ve kafeler için QR kod tabanlı dijital menü çözümleri.',
     siteName: 'Vizodex',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Vizodex Dijital Menü Sistemi',
@@ -59,9 +56,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Vizodex - Dijital Menü Sistemi',
-    description: 'Modern restoran ve kafeler için QR kod tabanlı dijital menü sistemi',
-    images: ['/images/twitter-image.jpg'],
-    creator: '@vizodex',
+    description: 'Modern restoran ve kafeler için QR kod tabanlı dijital menü çözümleri.',
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -75,7 +71,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code',
+    google: process.env.GOOGLE_SITE_VERIFICATION,
   },
 };
 
@@ -86,56 +82,40 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" suppressHydrationWarning>
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0ea5e9" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Vizodex" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-      </head>
       <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange={false}
-        >
-          <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900">
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
-          </div>
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: 'var(--toast-bg)',
-                color: 'var(--toast-color)',
-                border: '1px solid var(--toast-border)',
-                borderRadius: '12px',
-                fontSize: '14px',
-                fontWeight: '500',
-              },
-              success: {
-                iconTheme: {
-                  primary: '#10b981',
-                  secondary: '#ffffff',
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: 'var(--toast-bg)',
+                  color: 'var(--toast-color)',
+                  border: '1px solid var(--toast-border)',
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#ffffff',
+                success: {
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#ffffff',
+                  },
                 },
-              },
-            }}
-          />
-        </ThemeProvider>
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#ffffff',
+                  },
+                },
+              }}
+            />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
